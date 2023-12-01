@@ -1,6 +1,8 @@
 import requests
 import json
+import datetime
 from fastapi import FastAPI
+
 
 app = FastAPI()
 
@@ -10,16 +12,23 @@ url = 'https://api.nasa.gov/planetary/apod?api_key=0VdyL4qzq2P4OfTFJTV30pjKOOEj5
 async def root():
     return {"message": "Hello World"}
 
-@app.get("/apod-planetary")
-async def planetary():
+@app.get("/apod-today")
+async def get_today_apod():
     raw_response = requests.get(url)
     json_response = raw_response.json()
     return json_response
 
 # start_day:str, end_day
-@app.get("/apod/count")
-async def planetary():
-    params = {'date':'2020-03-09'}
-    raw_response = requests.get(url, params=params,)
+@app.get("/apod/date")
+async def search_by_date(day: datetime.date):
+    params = {'date':day}
+    raw_response = requests.get(url, params=params)
+    json_response = raw_response.json()
+    return json_response
+
+@app.get("/apod/pic-group")
+async def get_a_set_of_APOD(number: int):
+    params = {'count':number}
+    raw_response = requests.get(url, params=params)
     json_response = raw_response.json()
     return json_response
